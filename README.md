@@ -17,10 +17,10 @@ flutter_shake_animated: ^0.0.5
 #### 동일한 숫자 3번 입력 시, 팝업 알림
 ![동일 숫자 3번](https://user-images.githubusercontent.com/55618626/194410570-e31443f2-ca9b-4053-b714-ff1e74ef85ec.gif)
 
-#### 6 자리 입력 및, 전체삭제, 하나 삭제 기능
+#### 6 자리 입력 및 전체삭제, 하나 삭제 기능
 ![전체삭제](https://user-images.githubusercontent.com/55618626/194410592-2e5f0aa8-d06c-4fc5-a1ec-de13824ada30.gif)
 
-#### 비밀번호 한번 더 입력 화면, 일치하지 않는 화면
+#### 비밀번호 한번 더 입력 화면, 일치하지 않는 화면, 결과 화면
 ![ezgif com-gif-maker](https://user-images.githubusercontent.com/55618626/194410607-83010669-fccb-404a-985f-dbbb5d7e1154.gif)
 
 
