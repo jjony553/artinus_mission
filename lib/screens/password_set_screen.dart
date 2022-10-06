@@ -20,7 +20,7 @@ class _PassWordSetScreenState extends State<PassWordSetScreen> {
   final String infoText = "비밀번호 6자리를 입력해주세요.";
   final String checkInfoText = "비밀번호를 한번 더 입력해주세요.";
   final String incorrectInfoText = "비밀번호가 일치하지 않습니다.";
-  final String alarmContentText = "'동일한 숫자를 연속해서 3자리 이상 설정할 수 없습니다.'";
+  final String alarmContentText = "동일한 숫자를 연속해서 3자리 이상 설정할 수 없습니다.";
 
   InfoType nowState = InfoType.info;
 
@@ -35,12 +35,10 @@ class _PassWordSetScreenState extends State<PassWordSetScreen> {
     ["", false],
   ];
 
-  List keys = [];
+  List<List<dynamic>> keys = [];
   var topKeys = <String>{};
   final List bottomKeys = [
-    '전체삭제',
-    '',
-    const Icon(Icons.arrow_back, color: Colors.white)
+    ['전체삭제', '', const Icon(Icons.arrow_back, color: Colors.white)]
   ];
 
   @override
@@ -58,56 +56,79 @@ class _PassWordSetScreenState extends State<PassWordSetScreen> {
     }
 
     //bottomKeys 생성 (하단 가운데 나머지 1개 키패드)
-    final reasonsList = topKeys.toList();
-    reasonsList.sort();
+    List setBottomItem = topKeys.toList();
+    setBottomItem.sort();
 
     for (int i = 0; i < 9; i++) {
-      if (i.toString() != reasonsList[i]) {
-        bottomKeys[1] = i.toString();
+      if (i.toString() != setBottomItem[i]) {
+        bottomKeys[0][1] = i.toString();
         break;
       }
     }
 
-    keys = [...topKeys, ...bottomKeys];
+    //키보드 세팅을 위한 topKeys를 2차원 리스트로 변환
+    var topKeys2dList = [];
+    List topKeysList = topKeys.toList();
+
+    int itemCount = 3;
+    for (int i = 0; i < topKeysList.length; i += itemCount) {
+      topKeys2dList.add(topKeysList.sublist(
+          i,
+          i + itemCount > topKeysList.length
+              ? topKeysList.length
+              : i + itemCount));
+    }
+
+    keys = [...topKeys2dList, ...bottomKeys];
   }
 
   onKeyTap(val) {
     setState(() {
-      if (nowState == InfoType.incorrectInfo) {
-        nowState = InfoType.checkInfo;
-        checkPassword = addPassword(checkPassword, val);
-        figureDataState(true, checkPassword);
-      } else {
-        if (nowState == InfoType.info) {
-          //초기 비밀번호 설정
-          if (setPassword.length <= 5) {
-            setPassword = addPassword(setPassword, val);
-            figureDataState(true, setPassword);
-            checkConsecutiveNumber(setPassword, val, context);
-          } else {
+      switch (nowState) {
+        case InfoType.incorrectInfo:
+          //비교한 비밀번호가 다를 때
+          {
             nowState = InfoType.checkInfo;
-          }
-        } else if (nowState == InfoType.checkInfo) {
-          //비밀번호 확인하기
-          if (checkPassword.length <= 5) {
             checkPassword = addPassword(checkPassword, val);
             figureDataState(true, checkPassword);
-            if (checkPassword.length == 6) {
-              if (setPassword.compareTo(checkPassword) == 0) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            ResultScreen(passwordResult: setPassword)));
-              } else {
-                //비교한 비밀번호가 다를 때
-                nowState = InfoType.incorrectInfo;
-                checkPassword = initialPassword();
-                figureDataClear();
+          }
+          break;
+
+        case InfoType.info:
+          {
+            //초기 비밀번호 설정
+            if (setPassword.length <= 5) {
+              setPassword = addPassword(setPassword, val);
+              figureDataState(true, setPassword);
+              checkConsecutiveNumber(setPassword, val, context);
+            } else {
+              nowState = InfoType.checkInfo;
+            }
+          }
+          break;
+
+        case InfoType.checkInfo:
+          {
+            //비밀번호 확인하기
+            if (checkPassword.length <= 5) {
+              checkPassword = addPassword(checkPassword, val);
+              figureDataState(true, checkPassword);
+              if (checkPassword.length == 6) {
+                if (setPassword.compareTo(checkPassword) == 0) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ResultScreen(passwordResult: setPassword)));
+                } else {
+                  nowState = InfoType.incorrectInfo;
+                  checkPassword = initialPassword();
+                  figureDataClear();
+                }
               }
             }
           }
-        }
+          break;
       }
     });
   }
@@ -133,6 +154,7 @@ class _PassWordSetScreenState extends State<PassWordSetScreen> {
     }
 
     if (count > 2) {
+      //dialog
       alarmDialog(
         context,
         alarmContentText,
@@ -233,20 +255,15 @@ class _PassWordSetScreenState extends State<PassWordSetScreen> {
   }
 
   Widget _customKeyboard() {
-    return Expanded(
-        child: Padding(
-      padding: const EdgeInsets.only(top: 4.5),
-      child: GridView.count(
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisCount: 3,
-        childAspectRatio: 2,
-        children: keys
-            .map((e) => Row(
-                  children: [
-                    Expanded(
-                        child: CustomKeyboard(
-                      label: e,
-                      value: e,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: keys
+          .map((x) => Row(
+                children: x.map((y) {
+                  return Expanded(
+                    child: CustomKeyboard(
+                      label: y,
+                      value: y,
                       onTap: (val) {
                         if (val is Widget) {
                           onBackspacePress();
@@ -258,12 +275,12 @@ class _PassWordSetScreenState extends State<PassWordSetScreen> {
                           }
                         }
                       },
-                    )),
-                  ],
-                ))
-            .toList(),
-      ),
-    ));
+                    ),
+                  );
+                }).toList(),
+              ))
+          .toList(),
+    );
   }
 }
 
@@ -271,7 +288,7 @@ Widget _passwordFigure(List figureData, InfoType nowState) {
   return Expanded(
     child: nowState == InfoType.incorrectInfo
         ? ShakeWidget(
-            duration: const Duration(milliseconds: 3000),
+            duration: const Duration(seconds: 5),
             autoPlay: true,
             shakeConstant: ShakeHorizontalConstant1(),
             child: _renderFigure(figureData),
@@ -291,5 +308,5 @@ Widget _renderFigure(List<dynamic> figureData) {
 }
 
 figureBox(hasData) => Container(
-      child: hasData ? circleBox() : squareBox(),
+      child: hasData ? squareBox() : circleBox(),
     );

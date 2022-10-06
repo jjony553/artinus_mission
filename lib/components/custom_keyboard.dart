@@ -32,9 +32,12 @@ class _CustomKeyBoardState extends State<CustomKeyboard> {
       onTap: () {
         widget.onTap(widget.value);
       },
-      child: Container(
-        color: Colors.black87,
-        child: Center(child: checkLabel()),
+      child: AspectRatio(
+        aspectRatio: 2,
+        child: Container(
+          color: Colors.black87,
+          child: Center(child: checkLabel()),
+        ),
       ),
     );
   }
