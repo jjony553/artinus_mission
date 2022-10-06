@@ -20,22 +20,5 @@ class HomeScreen extends StatelessWidget {
                 );
               })),
     );
-
-    // Column(
-    //   children: <Widget>[
-    //     ElevatedButton(
-    //       child: Text('Alert Dialog test'),
-    //       onPressed: () {
-    //         alarmDialog(
-    //           context,
-    //           '동일한 숫자를 연속해서 3자리 이상 설정할 수 없습니다.',
-    //           () {
-    //             Navigator.of(context, rootNavigator: true).pop();
-    //           },
-    //         );
-    //       },
-    //     )
-    //   ],
-    // ));
   }
 }

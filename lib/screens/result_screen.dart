@@ -1,3 +1,4 @@
+import 'package:artinus_mission/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class ResultScreen extends StatelessWidget {
@@ -9,21 +10,27 @@ class ResultScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
           leading: IconButton(
-        icon: const Icon(
-          Icons.arrow_back,
-          color: Colors.black54,
-        ),
-        onPressed: () {
-          //홈으로 이동
-        },
-      )),
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.black54,
+            ),
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => const HomeScreen()),
+                  (route) => false);
+            },
+          )),
       body: Container(
           color: Colors.white,
           child: Center(
               child: Text(
             passwordResult,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
           ))),
     );
   }
