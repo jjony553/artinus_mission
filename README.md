@@ -9,7 +9,7 @@ Dart 2.18.1
 - package
 ```
 flutter_shake_animated: ^0.0.5
-
+```
 ## 스크린샷
 
 ### Home
